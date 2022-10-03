@@ -1,0 +1,31 @@
+<h3>Welcome to Wissen Coding Challenge!</h3>
+
+Your login details: <br />
+<p>Username: {{ user?.username }}</p>
+<button (click)="getUserInfo()">Get User List</button>
+<br />
+<br />
+<button (click)="logout()">Logout</button>
+<div *ngIf="showUsers">
+  Color of the Year
+  <table class="table">
+    <thead class="table-primary">
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Year</th>
+        <th>Color</th>
+        <th>pantone_value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="background:{{ u.color }}" *ngFor="let u of userDetails">
+        <td>{{ u.id }}</td>
+        <td>{{ u.name }}</td>
+        <td>{{ u.year }}</td>
+        <td>{{ u.color }}</td>
+        <td>{{ u.pantone_value }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
