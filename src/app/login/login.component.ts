@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
 /**
  * Modify the login component and the login template to collect login details and add the validators as necessary
  */
@@ -22,10 +28,26 @@ export class LoginComponent implements OnInit {
     private authenticationService: AuthenticationService
   ) {}
 
+  get getEmail() {
+    return this.loginForm.get('email');
+  }
+
+  get getPassword() {
+    return this.loginForm.get('password');
+  }
+
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
-      email: new FormControl(),
-      password: new FormControl(),
+      email: new FormControl('', [
+        Validators.required,
+        Validators.minLength(6),
+        Validators.pattern(/^[A-z.@]*$/), //allowing . and @ as we need to test with emailid
+      ]),
+      password: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.{8,})/),
+        Validators.minLength(8),
+      ]),
       terms: new FormControl(),
     });
   }
@@ -51,16 +73,6 @@ export class LoginComponent implements OnInit {
           alert('Invalid user');
         }
       );
-  }
-  // implement the username validator. Min 6 characters and no digits, special chars
-  usernameValidator() {
-    return false;
-  }
-
-  // implement the password validator
-  // Min 1 uppercase, 1 lower case and a digit. Total length >= 8
-  passwordValidator() {
-    return false;
   }
 
   togglePass() {

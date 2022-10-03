@@ -3,6 +3,8 @@
  */
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BnNgIdleService } from 'bn-ng-idle';
+import { Subscription } from 'rxjs';
 import { AuthenticationService } from '../services/authentication.service';
 import { User } from '../types/user.type';
 
@@ -16,20 +18,31 @@ export class WelcomeComponent implements OnInit {
   userDetails: UserDetails[] = new Array();
   res: any;
   showUsers = false;
+  subscription: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthenticationService
+    private authenticationService: AuthenticationService,
+    private bnNgIdle: BnNgIdleService
   ) {}
 
   ngOnInit() {
     this.user.username = this.route.snapshot.paramMap.get('username');
     this.user.token = JSON.parse(localStorage.getItem('currentUser')).token;
     this.getUserInfo();
+    this.subscription = this.bnNgIdle
+      .startWatching(5)
+      .subscribe((isValid: boolean) => {
+        if (isValid) {
+          this.logout();
+        }
+      });
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+  }
 
   logout() {
     this.user = new User();
